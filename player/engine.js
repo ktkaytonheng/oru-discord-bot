@@ -1,7 +1,7 @@
-import { useMainPlayer } from 'discord-player';
+import { useMainPlayer, useQueue } from 'discord-player';
 import Logger from '../logger/index.js';
 
-export async function playerPlay(interaction) {
+async function play(interaction) {
   const player = useMainPlayer();
   const channel = interaction.member.voice.channel;
   if (!channel) return interaction.reply('You are not connected to a voice channel!');
@@ -23,23 +23,22 @@ export async function playerPlay(interaction) {
   }
 }
 
-export async function playerAddToQueue(interaction) {
+async function pause(interaction) {
   const player = useMainPlayer();
-  const channel = interaction.member.voice.channel;
-  if (!channel) return interaction.reply('You are not connected to a voice channel!');
-  const query = interaction.options.getString('query', true);
+  const queue = player.queues;
 
-  await interaction.deferReply();
+  console.log(queue);
+}
 
-  try {
-    const { track } = await player.stop(channel, query, {
-      nodeOptions: {
-        metadata: interaction
-      }
-    });
-    return interaction.followUp(`Okay, I've stopped the player!`);
-  } catch (e) {
-    Logger.error(`${e}`)
-    return interaction.reply('Something went wrong...');
-  }
+async function resume(interaction) {
+  const player = useMainPlayer();
+  const queue = player.queues;
+
+  console.log(queue);
+}
+
+export default {
+  play,
+  pause,
+  resume
 }

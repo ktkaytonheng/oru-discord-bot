@@ -1,14 +1,18 @@
 import 'dotenv/config';
-import Logger from '../logger/index.js';
-import { playerPlay } from '../player/engine.js';
-
-const play = (interaction) => {
-  playerPlay(interaction);
-}
+import PlayerEngine from '../player/engine.js';
+import Logger from "../logger/index.js";
 
 export const handleCommand = (interaction) => {
+  Logger.info(interaction.commandName);
   switch (interaction.commandName) {
     case 'play':
-      play(interaction);
+      PlayerEngine.play(interaction);
+      break;
+    case 'pause':
+      PlayerEngine.pause(interaction);
+      break;
+    case 'resume':
+      PlayerEngine.resume(interaction);
+      break;
   }
 }

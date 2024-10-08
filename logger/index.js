@@ -17,7 +17,7 @@ export default class Logger {
   static #underline = '\x1b[4m';
 
   // Logging config
-  static #maxLength = 128;
+  static #maxLength = 96;
 
   // Helper functions
   static #addPadding = (val) => {
@@ -26,20 +26,26 @@ export default class Logger {
   }
 
   static #formatMessage = (val, options = { padding: false }) => {
-    var message = val;
-    if (options.submodule) {
-      message = `[${options.submodule}] ${message}`;
+    var message = '';
+    if (options.logType) {
+      message = `${message}[${options.logType}]`;
     }
     if (options.module) {
-      message = `[${options.module}] ${message}`;
+      message = `${message}[${options.module}]`;
     }
-    if (options.logType) {
-      message = `[${options.logType}] ${message}`;
+    if (options.submodule) {
+      message = `${message}[${options.submodule}]`;
     }
+
+    message = `${message} ${val}`;
+
     if (options.padding) {
       message = Logger.#addPadding(`${message}`);
     }
-    return message;
+    if (options.update) {
+      message = `\u001B[F \r${message}`
+    }
+    return `${message}\n`;
   }
 
   // Static methods
@@ -49,7 +55,7 @@ export default class Logger {
       ...options,
       logType: 'INFO',
     });
-    console.log(`${Logger.#yellow}${message}${Logger.#reset}`);
+    process.stdout.write(`${Logger.#yellow}${message}${Logger.#reset}`);
   }
 
   static error(val, options) {
@@ -58,7 +64,7 @@ export default class Logger {
       ...options,
       logType: 'ERROR'
     });
-    console.log(`${Logger.#red}${message}${Logger.#reset}`);
+    process.stdout.write(`${Logger.#red}${message}${Logger.#reset}`);
   }
 
   static success(val, options) {
@@ -67,6 +73,15 @@ export default class Logger {
       ...options,
       logType: 'SUCCESS'
     });
-    console.log(`${Logger.#green}${message}${Logger.#reset}`);
+    process.stdout.write(`${Logger.#green}${message}${Logger.#reset}`);
+  }
+
+  static logExecution(fn, { startText, endText }) {
+    return function(...args) {
+      Logger.info(startText);
+      const res = fn(...args);
+      Logger.success(endText, { update: true, padding: true });
+      return res;
+    }
   }
 }

@@ -33,7 +33,11 @@ const commands = [
   },
   {
     name: 'pause',
-    description: 'Toggles pause state',
+    description: 'Pause playback',
+  },
+  {
+    name: 'resume',
+    description: 'Resume playback'
   },
   {
     name: 'list',

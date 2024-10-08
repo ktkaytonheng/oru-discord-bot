@@ -4,7 +4,7 @@ import Logger from '../logger/index.js';
 import { handleCommand } from '../commands/index.js';
 import 'dotenv/config';
 
-export const createClient = () => {
+export const createClient = Logger.logExecution(() => {
   const client = new Client({
     intents: [
       IntentsBitField.Flags.Guilds,
@@ -16,7 +16,7 @@ export const createClient = () => {
   })
 
   client.on('ready', (context) => {
-    Logger.info(`${context.user.tag} is ready!`, { padding: true, module: 'INIT' });
+    Logger.success(`${context.user.tag} is ready!`, { padding: true });
 
     if (process.env.DEBUG_MODE === 'true') {
       const player = useMainPlayer();
@@ -38,4 +38,4 @@ export const createClient = () => {
   })
 
   return client;
-}
+} , { startText: 'Initializing client...', endText: 'Client initialized!' });

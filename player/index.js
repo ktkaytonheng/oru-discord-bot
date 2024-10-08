@@ -1,7 +1,7 @@
 import { Player } from 'discord-player';
 import Logger from '../logger/index.js';
 
-export const initializePlayer = (client) => {
+export const initializePlayer = Logger.logExecution((client) => {
   const player = new Player(client);
 
   player.on("error", (queue, error) => {
@@ -31,8 +31,5 @@ export const initializePlayer = (client) => {
     queue.metadata.send("✅ | Queue finished!");
   });
 
-  Logger.info('Discord player module initialized', { padding: true, module: 'INIT' });
-
-
   return player;
-}
+}, { startText: 'Initializing player...', endText: 'Player initialized' });
